@@ -7,7 +7,6 @@ Guess A Number using Pygame
 
 import pygame
 import random
-import textwrap
 
 WHITE = (255,255,255)
 BLACK = (0,0,0)
@@ -29,6 +28,29 @@ def main():
     active = False
     text = ''
     done = False
+    
+    
+    answer = None #the users guess
+    GAMEGUESS = random.randint(-50,50)
+    guess = " "
+    
+    def UserGuess(x):
+        try:
+            
+            if x < GAMEGUESS:
+                print("Too low")
+                return "Too low: " + str(x)
+            elif x > GAMEGUESS:
+                print("Too high")
+                return "Too high: " + str(x)
+            elif x == GAMEGUESS:
+                print("Correct!")
+                return "Correct: " + str(x)
+        except TypeError:
+            print("Invalid Guess")
+            pygame.quit()        
+    
+    info_text = ["Welcome to Guess", "A Number!","I am thinking of","a number between:","-50 and 50"]
 
     pygame.display.set_caption("Guess A Number")
 
@@ -51,21 +73,40 @@ def main():
                 if active:
                     if event.key == pygame.K_RETURN:
                         print(text)
+                        answer = int(text)   #store the userguess
+                        guess = UserGuess(answer)    #put this userguess through the function
                         text = ''
                     elif event.key == pygame.K_BACKSPACE:
                         text = text[:-1]
                     else:
                         text += event.unicode
         
-                
         screen.fill((30,30,30))
-        #Render the current text
+        
+        #-- Render the text --
+        
+        #input text from user
         inputtxt_surface = font.render(text, True, color)
-        displaytxt_surface = font.render("Welcome to Guess A Number!", True, WHITE)
-        #Blit the text
+        #info text for game
+        #the info text is too large for the window, this is toc reate new lines
+        display = []
+        for line in info_text:
+            display.append(font.render(line, True, WHITE))
+        # guess text
+        guesstxt_surface = font.render(guess, True, WHITE)
+       
+        #--Blit the text --
+        
+        #input text from user
         screen.blit(inputtxt_surface, (input_box.x+5, input_box.y+5))
-        screen.blit(displaytxt_surface, (display_box.x+5, display_box.y+5))
-        #Blit the input box rect
+        #info text
+        for line in range(len(display)):
+            screen.blit(display[line],(display_box.x+5,display_box.y+5+(line*32)+(5*line)))
+        #guess text
+        screen.blit(guesstxt_surface, (display_box.x+5, display_box.y+200))
+        
+        #--Blit the input box rect--
+        
         pygame.draw.rect(screen, color, input_box, 2)
         pygame.draw.rect(screen, INDIANRED, display_box, 2)
         
