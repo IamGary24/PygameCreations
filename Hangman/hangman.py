@@ -70,8 +70,36 @@ def main():
         pygame.display.flip()
     
     #-- update the board with each incorrect guess
-    #def updateBoard(x):
-    
+    #x is the number of incorrects, s is the word once chosen
+    def updateBoard(x, s):
+        pygame.draw.rect(screen, WHITE, boardContainer, 2)
+        pygame.draw.rect(screen, choiceColor, choiceContainer, 2)
+        pygame.draw.line(screen, WHITE, (290,50), (290,30))
+        pygame.draw.line(screen, WHITE, (290,30), (350,30))
+        pygame.draw.line(screen, WHITE, (350,30), (350,140))
+        
+        wordLen = len(s)
+        wordLineLength = 20
+        wordLineY = 240
+        wordLineX = 0
+        
+        if wordLen > 2:
+            #draw lines equivalent to word size
+            for x in range(1,wordLen+1):
+                if s[x-1] == " ": 
+                    #if this location in the string is whitespace
+                    wordLineX += 40 #move our "line drawer" to skip the line being drawn
+                elif x > 15:
+                    wordLineY = 280
+                    wordLineX = (x-14) * 40
+                    pygame.draw.line(screen, WHITE, (wordLineX+(wordLineLength),wordLineY),(wordLineX+(wordLineLength+20), wordLineY))
+
+                else:
+                    wordLineX = (x * 40) - 20 #we want to move by 40 px each time, but start at 20
+                    pygame.draw.line(screen, WHITE, (wordLineX,wordLineY),(wordLineX+(wordLineLength), wordLineY))
+
+            
+        pygame.display.flip()
     #-- receive the topic choice and choose a random word
     def receiveTopicChoice(s):
         s = s.lower()
@@ -81,7 +109,13 @@ def main():
             newWord = worddatabase.Place()
         elif s == " thing":
             newWord = worddatabase.Thing()
-            
+            #random_word() randomly chooses a word from the topic choices
+        
+        #now that we have the topic and word, remove the menu
+        screen.fill(BLACK, (100,320,440,fontsize))
+        #update the board to display this topic
+        topictext_surface = font.render(s.title(), True, WHITE)
+        screen.blit(topictext_surface, (10, 10))
         return newWord.random_word()
         
         
@@ -90,6 +124,8 @@ def main():
     #def guessCheck():
         
     #-- main game loop
+    topicMenu()
+    drawBoard()
     while not done:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -108,6 +144,7 @@ def main():
                 if active: #only if text box is selected
                     if event.key == pygame.K_RETURN:
                         print(choiceText)
+                        #this is the random word the player needs to guess
                         wordToGuess = receiveTopicChoice(choiceText)
                         print(wordToGuess)
                         choiceText = ''
@@ -118,10 +155,10 @@ def main():
        
         clock.tick(30)
         
-        #draw board or update board
-        if countGuess == 0:
-            topicMenu()
-            drawBoard()
+        #update board at each tick
+        #if countGuess == 0:
+        updateBoard(countIncorrect, wordToGuess)
+
         #else updateBoard(countIncorrect)
              
 if __name__ == '__main__':
