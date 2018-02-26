@@ -71,7 +71,7 @@ def main():
     
     #-- update the board with each incorrect guess
     #x is the number of incorrects, s is the word once chosen
-    def updateBoard(x, s):
+    def updateBoard(numInc, s):
         pygame.draw.rect(screen, WHITE, boardContainer, 2)
         pygame.draw.rect(screen, choiceColor, choiceContainer, 2)
         pygame.draw.line(screen, WHITE, (290,50), (290,30))
@@ -83,12 +83,16 @@ def main():
         wordLineY = 240
         wordLineX = 0
         
+        #the wordLen is greater than two, therefore it must be a topic choice
+        #update the board reflecting the word needed to be guessed
         if wordLen > 2:
             #draw lines equivalent to word size
             for x in range(1,wordLen+1):
                 if s[x-1] == " ": 
                     #if this location in the string is whitespace
                     wordLineX += 40 #move our "line drawer" to skip the line being drawn
+               
+                #handle "word wrapping"
                 elif x > 15:
                     wordLineY = 280
                     wordLineX = (x-14) * 40
@@ -97,9 +101,28 @@ def main():
                 else:
                     wordLineX = (x * 40) - 20 #we want to move by 40 px each time, but start at 20
                     pygame.draw.line(screen, WHITE, (wordLineX,wordLineY),(wordLineX+(wordLineLength), wordLineY))
-
             
+        #-- code for incorrect guesses --
+        
+        #there are only 6 guesses
+        if numInc == 1:
+            pygame.draw.circle(screen, WHITE, (291,55), 5, 2)
+        elif numInc == 2:
+            print(numInc)
+        elif numInc == 3:
+            print(numInc)
+        elif numInc == 4:
+            print(numInc)
+        elif numInc == 5:
+            print(numInc)
+        elif numInc == 6:
+            print(numInc)
+            
+        
+        
         pygame.display.flip()
+        
+        
     #-- receive the topic choice and choose a random word
     def receiveTopicChoice(s):
         s = s.lower()
@@ -128,23 +151,50 @@ def main():
         
         
     #-- receive the user's guess
-    def receiveUserGuess(guess, word):
-        print("guess: " + guess + " word:" + word)
+    def receiveUserGuess(guess, word, numIncorr):
+        print("guess:" + guess + " word:" + word)
         guess = guess.lower()
         word = word.lower()
         if len(guess) > 1:
             print("invalid guess, guess too long:" + guess)
             return guess
+        #guess is in the word
         elif guess in word:
-            #if the guess is in the word
-            print("yes")
-            return guess
+            allFound = False
+            #the guess is in the word, but there may be multiples
+            while not allFound:
+                #start by finding the first location
+                location = word.find(guess)
+                print("location of word.find(guess):")
+                print(location)              
+            #now we know where it is in the string, use this information to render it to the board
+            #wordLineLength = 20
+                wordLineY = 220
+                wordLineX = 0
+                for x in range(0,len(word)):
+                    if not (x == location):
+                    #we move to the next line
+                        wordLineX += 40
+                    elif x == location:
+                    #we are at the location
+                        print("at location, blit to screen")
+                        txt_surface = font.render(guess, True, WHITE)
+                        screen.blit(txt_surface, (wordLineX+25, wordLineY))
+                        pygame.display.flip()
+                        wordLineX += 40
+                #remove the found character from the word string
+                word = word[:location] + word[location+1:]
+                if guess not in word:
+                    allFound = True
+            return numIncorr
+        
         elif guess not in word:
+            numIncorr += 1
             print("no")
-            return guess
+            return numIncorr
         else:
             print("invalid guess, computer is confused:" + guess)
-            return guess
+            return numIncorr
             
             
             
@@ -179,8 +229,9 @@ def main():
                         
                         #receive a guess
                         if len(choiceText) < 2:
-                            receiveUserGuess(choiceText, wordToGuess)
-                        
+                            #the guess function will update the incorrect counter
+                            countIncorrect = receiveUserGuess(choiceText, wordToGuess, countIncorrect)
+                            print(countIncorrect)
                         choiceText = ''
                         #clear the choice container on return
                         screen.fill(BLACK, choiceContainer)
