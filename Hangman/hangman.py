@@ -106,17 +106,23 @@ def main():
         
         #there are only 6 guesses
         if numInc == 1:
+            #draw head
             pygame.draw.circle(screen, WHITE, (291,55), 5, 2)
         elif numInc == 2:
-            print(numInc)
+            #body
+            pygame.draw.line(screen, WHITE, (290, 60), (290, 80))
         elif numInc == 3:
-            print(numInc)
+            #right arm
+            pygame.draw.line(screen, WHITE, (290,70), (300, 60))
         elif numInc == 4:
-            print(numInc)
+            #left arm
+            pygame.draw.line(screen, WHITE, (290,70), (280, 60))
         elif numInc == 5:
-            print(numInc)
+            #right leg
+            pygame.draw.line(screen, WHITE, (290, 80), (280, 90))
         elif numInc == 6:
-            print(numInc)
+            #left leg
+            pygame.draw.line(screen, WHITE, (290, 80), (300, 90))
             
         
         
