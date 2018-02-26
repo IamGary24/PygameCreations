@@ -163,7 +163,7 @@ def main():
         word = word.lower()
         if len(guess) > 1:
             print("invalid guess, guess too long:" + guess)
-            return guess
+            return -1
         #guess is in the word
         elif guess in word:
             allFound = False
@@ -200,7 +200,7 @@ def main():
             return numIncorr
         else:
             print("invalid guess, computer is confused:" + guess)
-            return numIncorr
+            return -1
             
             
             
@@ -238,6 +238,9 @@ def main():
                             #the guess function will update the incorrect counter
                             countIncorrect = receiveUserGuess(choiceText, wordToGuess, countIncorrect)
                             print(countIncorrect)
+                            if countIncorrect == -1:
+                                print("invalid guess, close pygame")
+                                done = True
                         choiceText = ''
                         #clear the choice container on return
                         screen.fill(BLACK, choiceContainer)
@@ -252,11 +255,19 @@ def main():
         blitTextToScreen(choiceText)
         
         #update board at each tick
-        #if countGuess == 0:
-        updateBoard(countIncorrect, wordToGuess)
-
-
-        #else updateBoard(countIncorrect)
+        if countIncorrect < 7:
+            updateBoard(countIncorrect, wordToGuess)
+        elif countIncorrect >= 7:
+            #game is over, fill screen
+            screen.fill(BLACK)
+            #display game over
+            txt_surface = font.render("Game Over", True, WHITE)
+            screen.blit(txt_surface, (boardContainer.x+5, boardContainer.y))
+            pygame.display.flip()
+            pygame.time.wait(5000) # in millisseconds
+            done = True
+        
+        
              
 if __name__ == '__main__':
     pygame.init()
