@@ -32,11 +32,10 @@ def main():
     clock = pygame.time.Clock()
     done = False
     active = False
-    wordToGuess = " "
+    wordToGuess = "  "
     countIncorrect = 0      #store number of incorrects
-    countGuess = 0          #store total guesses
+    countCorrect = 0        #store number of corrects
     possibleGuess = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
-    currentGuess = None     #track the current guess from user
     pygame.display.set_caption("Hangman")
     
     #-- hold information for the topic menu and draw it
@@ -157,22 +156,24 @@ def main():
         
         
     #-- receive the user's guess
-    def receiveUserGuess(guess, word, numIncorr):
-        print("guess:" + guess + " word:" + word)
+    def receiveUserGuess(guess, word, numIncorr, numCorr):
+        print("guess:" + guess + " word:" + word + " num Incorrect:", numIncorr, " numCorr:", numCorr)
         guess = guess.lower()
         word = word.lower()
         if len(guess) > 1:
             print("invalid guess, guess too long:" + guess)
-            return -1
+            return -1, numCorr
         #guess is in the word
         elif guess in word:
             allFound = False
+            count = 0
             #the guess is in the word, but there may be multiples
             while not allFound:
                 #start by finding the first location
+                numCorr += 1
                 location = word.find(guess)
                 print("location of word.find(guess):")
-                print(location)              
+                print(location) 
             #now we know where it is in the string, use this information to render it to the board
             #wordLineLength = 20
                 wordLineY = 220
@@ -182,7 +183,9 @@ def main():
                     #we move to the next line
                         wordLineX += 40
                     elif x == location:
-                    #we are at the location
+                        if count > 0:
+                            wordLineX += 40*count
+                        #we are at the location
                         print("at location, blit to screen")
                         txt_surface = font.render(guess, True, WHITE)
                         screen.blit(txt_surface, (wordLineX+25, wordLineY))
@@ -190,17 +193,18 @@ def main():
                         wordLineX += 40
                 #remove the found character from the word string
                 word = word[:location] + word[location+1:]
+                print(word)
+                count += 1
                 if guess not in word:
                     allFound = True
-            return numIncorr
-        
+            return numIncorr, numCorr       
         elif guess not in word:
             numIncorr += 1
             print("no")
-            return numIncorr
+            return numIncorr, numCorr
         else:
             print("invalid guess, computer is confused:" + guess)
-            return -1
+            return -1, numCorr
             
             
             
@@ -228,6 +232,7 @@ def main():
                 if active: #only if text box is selected
                     if event.key == pygame.K_RETURN:
                         print(choiceText)
+                        
                         #this is the random word the player needs to guess
                         if len(choiceText) > 4:
                             wordToGuess = receiveTopicChoice(choiceText)
@@ -236,11 +241,21 @@ def main():
                         #receive a guess
                         if len(choiceText) < 2:
                             #the guess function will update the incorrect counter
-                            countIncorrect = receiveUserGuess(choiceText, wordToGuess, countIncorrect)
+                            countIncorrect, countCorrect = receiveUserGuess(choiceText, wordToGuess, countIncorrect, countCorrect)
                             print(countIncorrect)
                             if countIncorrect == -1:
                                 print("invalid guess, close pygame")
                                 done = True
+                        
+                        if countCorrect == len(wordToGuess)-1:
+                            screen.fill(BLACK)
+                            txt_surface = font.render("Congratulations!", True, WHITE)
+                            screen.blit(txt_surface, (boardContainer.x+5, boardContainer.y))
+                            txt_surface = font.render("Word was: " + wordToGuess, True, WHITE)
+                            screen.blit(txt_surface, (boardContainer.x+5, boardContainer.y+fontsize))
+                            pygame.display.flip()
+                            pygame.time.wait(5000) # in millisseconds
+                            done = True
                         choiceText = ''
                         #clear the choice container on return
                         screen.fill(BLACK, choiceContainer)
@@ -257,7 +272,7 @@ def main():
         #update board at each tick
         if countIncorrect < 7:
             updateBoard(countIncorrect, wordToGuess)
-        elif countIncorrect >= 7:
+        elif countIncorrect == 7:
             #game is over, fill screen
             screen.fill(BLACK)
             #display game over
@@ -266,6 +281,7 @@ def main():
             pygame.display.flip()
             pygame.time.wait(5000) # in millisseconds
             done = True
+            
         
         
              
