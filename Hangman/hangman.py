@@ -103,7 +103,10 @@ def main():
     #-- receive the topic choice and choose a random word
     def receiveTopicChoice(s):
         s = s.lower()
-        if s == " person":
+        #if our string is too small, exit the function and return the string
+        if len(s) < 2:
+            return s
+        elif s == " person":
             newWord = worddatabase.Person()
         elif s == " place":
             newWord = worddatabase.Place()
@@ -117,9 +120,34 @@ def main():
         topictext_surface = font.render(s.title(), True, WHITE)
         screen.blit(topictext_surface, (10, 10))
         return newWord.random_word()
+    
+    #-- general function to blit text to screen
+    def blitTextToScreen(text):
+        txt_surface = font.render(text, True, color_active)
+        screen.blit(txt_surface, (choiceContainer.x+5, choiceContainer.y+5))
         
         
-     
+    #-- receive the user's guess
+    def receiveUserGuess(guess, word):
+        print("guess: " + guess + " word:" + word)
+        guess = guess.lower()
+        word = word.lower()
+        if len(guess) > 1:
+            print("invalid guess, guess too long:" + guess)
+            return guess
+        elif guess in word:
+            #if the guess is in the word
+            print("yes")
+            return guess
+        elif guess not in word:
+            print("no")
+            return guess
+        else:
+            print("invalid guess, computer is confused:" + guess)
+            return guess
+            
+            
+            
     #-- check the guess against the chosen word    
     #def guessCheck():
         
@@ -145,9 +173,17 @@ def main():
                     if event.key == pygame.K_RETURN:
                         print(choiceText)
                         #this is the random word the player needs to guess
-                        wordToGuess = receiveTopicChoice(choiceText)
-                        print(wordToGuess)
+                        if len(choiceText) > 4:
+                            wordToGuess = receiveTopicChoice(choiceText)
+                            print(wordToGuess)
+                        
+                        #receive a guess
+                        if len(choiceText) < 2:
+                            receiveUserGuess(choiceText, wordToGuess)
+                        
                         choiceText = ''
+                        #clear the choice container on return
+                        screen.fill(BLACK, choiceContainer)
                     elif event.key == pygame.K_BACKSPACE:
                         choiceText = choiceText[:-1]
                     else:
@@ -155,9 +191,13 @@ def main():
        
         clock.tick(30)
         
+        #render choice text to screen
+        blitTextToScreen(choiceText)
+        
         #update board at each tick
         #if countGuess == 0:
         updateBoard(countIncorrect, wordToGuess)
+
 
         #else updateBoard(countIncorrect)
              
