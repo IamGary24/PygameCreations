@@ -7,7 +7,7 @@ The main controller for the tic tac toe game
 import pygame
 import drawboard
 import numpy
-
+    
 
 def main():
 
@@ -48,7 +48,8 @@ def main():
     
     #-- GAME --
     donePlaying = False
-    player = "circles"
+    player = "human"
+    token = "circles"
     while not donePlaying:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -59,7 +60,9 @@ def main():
                     for j in range(len(boardContainers[i])):
                         if boardContainers[i][j].collidepoint(event.pos):
                             activeContainer = boardContainers[i][j] #denote this container as the active one
-                            gameBoard.update(activeContainer, player)
+                            gameBoard.update(activeContainer, token)
+                            #function to track this coordinate as circle or ex
+                            #gameBoard.victoryTracker((i,j),player,token)
                 
                 
                 
