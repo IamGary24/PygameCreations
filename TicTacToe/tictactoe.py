@@ -6,6 +6,7 @@ The main controller for the tic tac toe game
 """
 import pygame
 import drawboard
+import numpy
 
 
 def main():
@@ -29,8 +30,15 @@ def main():
     gameBoard.draw()
     
     #-- use the initialized gameboard to provide containers
-    boardContainers = gameBoard.tiles
+    boardContainers = numpy.zeros((3,3), dtype= pygame.Rect)
     print("board containers: ", boardContainers)
+    rectWallSize = 40 #our tiles are 80x80 and we have the pos for the center 
+    #initialize our array holding the containers for the board
+    for i in range(len(gameBoard.tiles)):
+        for j in range(len(gameBoard.tiles[i])):
+            x,y = gameBoard.tiles[i][j]            #left wall,      top,         right wall,     bottom
+            boardContainers[i][j] = pygame.Rect(x-rectWallSize, y-rectWallSize, x+rectWallSize, y+rectWallSize)      
+    print("new board containers: ", boardContainers)
     
     #-- MENU --
     doneInMenu = False
@@ -40,11 +48,22 @@ def main():
     
     #-- GAME --
     donePlaying = False
+    player = "circles"
     while not donePlaying:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 donePlaying = True
-            #if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                #iterate through our boardcontainers and determine which container is active
+                for i in range(len(boardContainers)):
+                    for j in range(len(boardContainers[i])):
+                        if boardContainers[i][j].collidepoint(event.pos):
+                            activeContainer = boardContainers[i][j] #denote this container as the active one
+                            gameBoard.update(activeContainer, player)
+                
+                
+                
+                
                 
                 
     
