@@ -16,7 +16,7 @@ class DrawBoard:
     
     tiles = numpy.zeros((3,3), dtype=tuple)
     print(tiles)
-    victoryTiles = numpy.zeros((3,3), dtype=str)
+    victoryTiles = numpy.array([['d','e','f'],['g','h','j'],['u','i','o']])
     victory = False
     
     #constructor
@@ -61,13 +61,12 @@ class DrawBoard:
             self.ex(rect)
 #draw circle
     def circle(self, rect, radius = 35, width = 2):
-        print("rect.left", rect.left)
         pygame.draw.circle(self.surface, WHITE, (rect.left+40,rect.top+40), radius, width)
         pygame.display.flip()
 #draw x
     def ex(self, rect):
-        pygame.draw.line(self.surface, WHITE, (rect.left-25, rect.y-25), (rect.x+25, rect.y+25), 2)
-        pygame.draw.line(self.surface, WHITE, (rect.x-25, rect.y+25), (rect.x+25, rect.y-25), 2)
+        pygame.draw.line(self.surface, WHITE, (rect.left-25, rect.top-25), (rect.left+25, rect.top+25), 2)
+        pygame.draw.line(self.surface, WHITE, (rect.left-25, rect.top+25), (rect.left+25, rect.top-25), 2)
         pygame.display.flip()
         
     def victoryTracker(self, index, player, token):
@@ -86,7 +85,8 @@ class DrawBoard:
             (self.victoryTiles[0][2] == self.victoryTiles[1][2] and self.victoryTiles[1][2] == self.victoryTiles[2][2]) or
             (self.victoryTiles[0][0] == self.victoryTiles[1][1] and self.victoryTiles[1][1] == self.victoryTiles[2][2]) or
             (self.victoryTiles[2][0] == self.victoryTiles[1][1] and self.victoryTiles[1][1] == self.victoryTiles[0][2])):
-                self.victory = True
+                self.victory = True 
+        print(self.victory)
         
         
         
