@@ -16,6 +16,8 @@ class DrawBoard:
     
     tiles = numpy.zeros((3,3), dtype=tuple)
     print(tiles)
+    victoryTiles = numpy.zeros((3,3), dtype=str)
+    victory = False
     
     #constructor
     def __init__(self, surface):
@@ -51,17 +53,41 @@ class DrawBoard:
 
 #update board
     #player is either circles or exes
-    def update(self, rect, player):
-        if player == "circles":
+    def update(self, rect, token):
+        print("updating board")
+        if token == "circles":
             self.circle(rect)
-        elif player == "exes":
+        elif token == "exes":
             self.ex(rect)
 #draw circle
     def circle(self, rect, radius = 35, width = 2):
-        pygame.draw.circle(self.surface, WHITE, (rect.x+40,rect.y+40), radius, width)
+        print("rect.left", rect.left)
+        pygame.draw.circle(self.surface, WHITE, (rect.left+40,rect.top+40), radius, width)
         pygame.display.flip()
 #draw x
     def ex(self, rect):
-        pygame.draw.line(self.surface, WHITE, (rect.x-25, rect.y-25), (rect.x+25, rect.y+25), 2)
+        pygame.draw.line(self.surface, WHITE, (rect.left-25, rect.y-25), (rect.x+25, rect.y+25), 2)
         pygame.draw.line(self.surface, WHITE, (rect.x-25, rect.y+25), (rect.x+25, rect.y-25), 2)
         pygame.display.flip()
+        
+    def victoryTracker(self, index, player, token):
+        #our 3,3 array looks like a tictactoe board
+        #first the index location gets the token: 'circle' or 'ex'
+        i,j = index
+        self.victoryTiles[i][j] = token
+        print("victory tiles",self.victoryTiles)
+        #now we want to track victory or if there are no more options
+        #first we will see if anyone won
+        if ((self.victoryTiles[0][0] == self.victoryTiles[0][1] and self.victoryTiles[0][1] == self.victoryTiles[0][2]) or
+            (self.victoryTiles[1][0] == self.victoryTiles[1][1] and self.victoryTiles[1][1] == self.victoryTiles[1][2]) or
+            (self.victoryTiles[2][0] == self.victoryTiles[2][1] and self.victoryTiles[2][1] == self.victoryTiles[2][2]) or
+            (self.victoryTiles[0][0] == self.victoryTiles[1][0] and self.victoryTiles[1][0] == self.victoryTiles[2][0]) or
+            (self.victoryTiles[0][1] == self.victoryTiles[1][1] and self.victoryTiles[1][1] == self.victoryTiles[2][1]) or
+            (self.victoryTiles[0][2] == self.victoryTiles[1][2] and self.victoryTiles[1][2] == self.victoryTiles[2][2]) or
+            (self.victoryTiles[0][0] == self.victoryTiles[1][1] and self.victoryTiles[1][1] == self.victoryTiles[2][2]) or
+            (self.victoryTiles[2][0] == self.victoryTiles[1][1] and self.victoryTiles[1][1] == self.victoryTiles[0][2])):
+                self.victory = True
+        
+        
+        
+        
