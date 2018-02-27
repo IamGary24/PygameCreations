@@ -60,9 +60,9 @@ def main():
                     for j in range(len(boardContainers[i])):
                         if boardContainers[i][j].collidepoint(event.pos):
                             activeContainer = boardContainers[i][j] #denote this container as the active one
-                            gameBoard.update(activeContainer, token)
-                            #function to track this coordinate as circle or ex
-                            #gameBoard.victoryTracker((i,j),player,token)
+                            coords = i,j
+                gameBoard.update(activeContainer, token)
+                gameBoard.victoryTracker(coords,player,token)
                 
                 
                 
