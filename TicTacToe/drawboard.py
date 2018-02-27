@@ -50,13 +50,18 @@ class DrawBoard:
     #def textRender(self, txt):
 
 #update board
-    #def update(self):
-        
+    #player is either circles or exes
+    def update(self, rect, player):
+        if player == "circles":
+            self.circle(rect)
+        elif player == "exes":
+            self.ex(rect)
 #draw circle
-    def circle(self, pos, radius = 35, width = 2):
-        pygame.draw.circle(self.surface, WHITE, pos, radius, width)
+    def circle(self, rect, radius = 35, width = 2):
+        pygame.draw.circle(self.surface, WHITE, (rect.x+40,rect.y+40), radius, width)
+        pygame.display.flip()
 #draw x
-    def ex(self, pos):
-        x, y = pos
-        pygame.draw.line(self.surface, WHITE, (x-25, y-25), (x+25, y+25), 2)
-        pygame.draw.line(self.surface, WHITE, (x-25, y+25), (x+25, y-25), 2)
+    def ex(self, rect):
+        pygame.draw.line(self.surface, WHITE, (rect.x-25, rect.y-25), (rect.x+25, rect.y+25), 2)
+        pygame.draw.line(self.surface, WHITE, (rect.x-25, rect.y+25), (rect.x+25, rect.y-25), 2)
+        pygame.display.flip()
