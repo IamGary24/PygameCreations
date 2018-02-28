@@ -14,9 +14,10 @@ BLACK = (0,0,0)
 
 class DrawBoard:
     
+    fontsize = 32
     tiles = numpy.zeros((3,3), dtype=tuple)
     print(tiles)
-    victoryTiles = numpy.array([['d','e','f'],['g','h','j'],['u','i','o']])
+    victoryTiles = numpy.array([['d','n','f'],['g','h','j'],['u','i','o']])
     victory = False
     
     #constructor
@@ -30,8 +31,6 @@ class DrawBoard:
                 if y == 0: #if we are at positions (0,0), (1,0), (2,0) we need to start over at 240
                     self.x = 240
                 self.tiles[x][y] = (self.x, self.y)
-                #self.circle(self.tiles[x][y]) #draw each circle on the board for testing
-                #self.ex(self.tiles[x][y])     #draw each ex on the board for testing
                 if y == 2: #after we have gone through three columns we need to increment y to the next row
                     self.y += 80
                 self.x += 80
@@ -47,14 +46,10 @@ class DrawBoard:
         pygame.draw.line(self.surface, WHITE, (280,140), (280,380)) #left line
         pygame.draw.line(self.surface, WHITE, (360,140), (360,380)) #right line
         pygame.display.flip()
-        
-#render text
-    #def textRender(self, txt):
 
 #update board
     #player is either circles or exes
     def update(self, rect, token):
-        print("updating board")
         if token == "circles":
             self.circle(rect)
         elif token == "exes":
@@ -65,8 +60,8 @@ class DrawBoard:
         pygame.display.flip()
 #draw x
     def ex(self, rect):
-        pygame.draw.line(self.surface, WHITE, (rect.left-25, rect.top-25), (rect.left+25, rect.top+25), 2)
-        pygame.draw.line(self.surface, WHITE, (rect.left-25, rect.top+25), (rect.left+25, rect.top-25), 2)
+        pygame.draw.line(self.surface, WHITE, (rect.x+5, rect.y+5), (rect.x+75, rect.y+75), 2)
+        pygame.draw.line(self.surface, WHITE, (rect.x+5, rect.y+75), (rect.x+75, rect.y+5), 2)
         pygame.display.flip()
         
     def victoryTracker(self, index, player, token):
@@ -74,7 +69,7 @@ class DrawBoard:
         #first the index location gets the token: 'circle' or 'ex'
         i,j = index
         self.victoryTiles[i][j] = token
-        print("victory tiles",self.victoryTiles)
+        #print("victory tiles",self.victoryTiles)
         #now we want to track victory or if there are no more options
         #first we will see if anyone won
         if ((self.victoryTiles[0][0] == self.victoryTiles[0][1] and self.victoryTiles[0][1] == self.victoryTiles[0][2]) or
