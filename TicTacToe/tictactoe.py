@@ -80,6 +80,7 @@ def main():
         
         #-- GAME --
         #exes go first
+        turnCounter = 0
         if humanToken == "exes":
             playerTurn = True
         else:
@@ -101,6 +102,7 @@ def main():
                 gameBoard.update(boardContainers[i][j], computerToken)
                 gameBoard.victoryTracker(boardContainerIndex, player, computerToken)
                 playerTurn = True
+                turnCounter += 1
             
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -117,12 +119,20 @@ def main():
                         gameBoard.update(activeContainer, humanToken)
                         gameBoard.victoryTracker(coords, player, humanToken)
                         playerTurn = False
+                        turnCounter += 1
                         
             #victory or not
             if gameBoard.victory:
                 pygame.time.wait(1000)
                 #gameboard tracks victory as well as drawing of the board
-                gameBoard.drawVictoryScreen()
+                gameBoard.drawVictoryScreen(player)
+                pygame.time.wait(1000)
+                donePlaying, doneInMenu = True, True
+                
+            if turnCounter >= 9:
+                player = "cat"
+                pygame.time.wait(1000)
+                gameBoard.drawVictoryScreen(player)
                 pygame.time.wait(1000)
                 donePlaying, doneInMenu = True, True
             
