@@ -39,4 +39,7 @@ class Menu:
         
     def button(self, left, top):
         return pygame.Rect(left, top, 105, self.fontsize)
+    
+    def __del__ (self):
+        print("menu died")
 
