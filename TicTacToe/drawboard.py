@@ -7,6 +7,7 @@ This will draw the board for tic tac toe
 
 import pygame
 import numpy
+import menu
 
 #Colors used
 WHITE = (255,255,255)
@@ -16,8 +17,7 @@ class DrawBoard:
     
     fontsize = 32
     tiles = numpy.zeros((3,3), dtype=tuple)
-    print(tiles)
-    victoryTiles = numpy.array([['d','n','f'],['g','h','j'],['u','i','o']])
+    victoryTiles = None
     victory = False
     
     #constructor
@@ -25,6 +25,8 @@ class DrawBoard:
         #coordinates for the size of the board
         self.x, self.y = 240,180 #starting position for our tiles array
         self.surface = surface
+        self.player = "default"
+        self.victoryTiles = numpy.array([['d','n','f'],['g','h','j'],['u','i','o']])
         #note: our tiles are 80x80 px
         for x in range(len(self.tiles)):
             for y in range(len(self.tiles[x])):
@@ -34,7 +36,6 @@ class DrawBoard:
                 if y == 2: #after we have gone through three columns we need to increment y to the next row
                     self.y += 80
                 self.x += 80
-        print(self.tiles)
         
 #draw menu
     #def drawMenu(self):
@@ -69,7 +70,8 @@ class DrawBoard:
         #first the index location gets the token: 'circle' or 'ex'
         i,j = index
         self.victoryTiles[i][j] = token
-        #print("victory tiles",self.victoryTiles)
+        self.player = player
+        print("victory tiles: ",self.victoryTiles,"victory: ", self.victory)
         #now we want to track victory or if there are no more options
         #first we will see if anyone won
         if ((self.victoryTiles[0][0] == self.victoryTiles[0][1] and self.victoryTiles[0][1] == self.victoryTiles[0][2]) or
@@ -80,8 +82,21 @@ class DrawBoard:
             (self.victoryTiles[0][2] == self.victoryTiles[1][2] and self.victoryTiles[1][2] == self.victoryTiles[2][2]) or
             (self.victoryTiles[0][0] == self.victoryTiles[1][1] and self.victoryTiles[1][1] == self.victoryTiles[2][2]) or
             (self.victoryTiles[2][0] == self.victoryTiles[1][1] and self.victoryTiles[1][1] == self.victoryTiles[0][2])):
-                self.victory = True 
-        print(self.victory)
+                self.victory = True
+        print(self.victory, ", ", player)
+    
+    def drawVictoryScreen(self):
+        self.surface.fill(BLACK)
+        victoryMenu = menu.Menu(self.surface)
+        victoryMenu.textRender((self.player.title() + " wins!"), (250,105), WHITE)
+        self.victory = False
+        self.victoryTiles = None
+        print(self.victoryTiles)
+        self.player = "default"
+        
+    def __del__ (self):
+        print("gameboard died")
+
         
         
         
