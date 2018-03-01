@@ -42,4 +42,8 @@ class Computer:
                 index = 2,2
         
         return board, index
+    
+        def __del__ (self):
+            print("computer died")
+
         
