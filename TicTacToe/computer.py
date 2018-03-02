@@ -58,6 +58,7 @@ class Computer:
             
                 
         if self.token == "circles":
+            #if center is open
             if not board[1][1] == 'e' and not board[1][1] == 'c':
                 board[1][1] = 'c'
                 index = 1,1
@@ -65,12 +66,69 @@ class Computer:
             elif not board[0][0] == 'e' and not board[0][0] == 'c':
                 board[0][0] = 'c'
                 index = 0,0
-            #if bottom right is open
-            elif not board[2][2] == 'e' and not board[2][2] == 'c':
-                board [2][2] = 'c'
-                index = 2,2
-        
+            #check to see if the opponenet owns the center tile, if they do check the middle tiles
+            if board[1][1] == 'e' and self.checkMiddles(board):
+                #they own a middle tile, now find it and block their victory
+                #they own top middle
+                if board[0][1] == 'e' and not board[2][1] == 'c':
+                    board[2][1] = 'c'
+                    index = 2,1
+                #they own bottom middle
+                elif board[2][1] == 'e' and not board[0][1] == 'c':
+                    board[0][1] = 'c'
+                    index = 0,1
+                #they own right middle
+                elif board[1][2] == 'e' and not board[1][0] == 'c':
+                    board[1][0] = 'c'
+                    index = 1,0
+                #they own left middle
+                elif board[1][0] == 'e' and not board[1][2] == 'c':
+                    board[1][2] = 'c'
+                    index = 1,2
+            #check to see if the opponent owns a diagonal tile and the center, block them
+            if board[1][1] == 'e' and self.checkCorners(board):                
+                #they own a corner tile, now find it and block their victory
+                #they own top left
+                if board[0][0] == 'e' and not board[2][2] == 'c':
+                    board[2][2] = 'c'
+                    index = 2,2
+                #they own top right
+                elif board[0][2] == 'e' and not board[2][0] == 'c':
+                    board[2][0] = 'c'
+                    index = 2,0
+                #they own bottom left
+                elif board[2][0] == 'e' and not board[0][2] == 'c':
+                    board[0][2] = 'c'
+                    index = 0,2
+                #they own bottom right
+                elif board[2][2] == 'e' and not board[0][0] == 'c':
+                    board[0][0] = 'c'
+                    index = 0,0
+            #there isn't a way to lose and there are open locations to play, so lets do that
+            elif not board[1][2] =='e' and not board[1][2] =='c':
+                board [1][2] = 'c'
+                index = 1,2
+            elif not board[2][1] =='e' and not board[2][1] =='c':
+                board [2][1] = 'c'
+                index = 2,1
+            elif not board[1][0] =='e' and not board[1][0] =='c':
+                board [1][0] = 'c'
+                index = 1,0
+            
+            
         return board, index
+    #this function is only for computer token circles, not exes
+    def checkMiddles(self, board):
+        #check the "plus" sign to make sure that none of them are taken
+        if board[1][1] == 'e' or board[1][0] == 'e' or board[2][1] == 'e' or board[1][2] == 'e' or board[1][1] == 'e':
+            return True
+        
+    def checkCorners(self, board):
+        #check the "plus" sign to make sure that none of them are taken
+        if board[1][1] == 'e' or board[1][0] == 'e' or board[2][1] == 'e' or board[1][2] == 'e' or board[1][1] == 'e':
+            return True
+            
+        
     
         def __del__ (self):
             print("computer died")
